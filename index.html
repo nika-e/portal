@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社内AI活用ポータル - AI Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#6366f1',
+                            indigo: '#4f46e5',
+                            geminiBlue: '#1a73e8',
+                            copilotBlue: '#0078d4',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans JP', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+        }
+        /* スムーズなフェードアニメーション */
+        .page-transition {
+            transition: opacity 0.4s ease-in-out, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .page-enter {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        .page-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* 美しいホバー時の光彩 */
+        .premium-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .premium-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgb(99 102 241 / 0.15), 0 8px 10px -6px rgb(99 102 241 / 0.15);
+        }
+        /* プロンプト生成時などのきらめきグラデーション */
+        .shimmer {
+            background: linear-gradient(90deg, #eff6ff 25%, #dbeafe 50%, #eff6ff 75%);
+            background-size: 200% 100%;
+            animation: loading-shimmer 1.5s infinite;
+        }
+        @keyframes loading-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        /* フローチャート用点滅アニメーション */
+        @keyframes dash {
+            to { stroke-dashoffset: -20; }
+        }
+        .flow-line {
+            stroke-dasharray: 5;
+            animation: dash 1s linear infinite;
+        }
+        /* 宇宙的なゆっくり脈打つネオンアニメーション設定 */
+        @keyframes neonPulse {
+            0%, 100% {
+                box-shadow: 0 0 4px rgba(99, 102, 241, 0.15), 0 0 10px rgba(168, 85, 247, 0.15), 0 0 18px rgba(236, 72, 153, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 8px rgba(99, 102, 241, 0.35), 0 0 18px rgba(168, 85, 247, 0.35), 0 0 30px rgba(236, 72, 153, 0.25);
+            }
+        }
+        .neon-card {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulse 3s infinite ease-in-out;
+        }
+        .neon-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.55), 0 0 28px rgba(168, 85, 247, 0.55), 0 0 45px rgba(236, 72, 153, 0.4);
+            animation-play-state: paused;
+        }
+        /* CORE CONCEPT & プロンプトメーカー用のネオン脈動設定 */
+        @keyframes neonPulseConcept {
+            0%, 100% {
+                box-shadow: 0 0 3px rgba(255, 255, 255, 0.95), 0 0 14px rgba(168, 85, 247, 0.3), 0 0 24px rgba(99, 102, 241, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 6px rgba(255, 255, 255, 1), 0 0 26px rgba(168, 85, 247, 0.6), 0 0 45px rgba(99, 102, 241, 0.45);
+            }
+        }
+        .neon-card-concept {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseConcept 3s infinite ease-in-out;
+        }
+        .neon-card-concept:hover {
+            box-shadow: 0 0 8px rgba(255, 255, 255, 1), 0 0 32px rgba(168, 85, 247, 0.8), 0 0 55px rgba(99, 102, 241, 0.6);
+            animation-play-state: paused;
+        }
+        /* 発生理由：黄色とオレンジの淡いネオンエフェクト設定 */
+        @keyframes neonPulseYellow {
+            0%, 100% {
+                box-shadow: 0 0 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(251, 191, 36, 0.2), 0 0 15px rgba(249, 115, 22, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 4px rgba(255, 255, 255, 1), 0 0 14px rgba(251, 191, 36, 0.35), 0 0 25px rgba(249, 115, 22, 0.2);
+            }
+        }
+        .neon-card-yellow {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseYellow 3s infinite ease-in-out;
+        }
+        .neon-card-yellow:hover {
+            box-shadow: 0 0 6px rgba(255, 255, 255, 1), 0 0 20px rgba(251, 191, 36, 0.55), 0 0 35px rgba(249, 115, 22, 0.35);
+            animation-play-state: paused;
+        }
+        /* 5つの実践アプローチ＆2大AI比較カード：スカイブルー×エメラルドグリーン */
+        @keyframes neonPulseCyanGreen {
+            0%, 100% {
+                box-shadow: 0 0 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(14, 165, 233, 0.18), 0 0 15px rgba(16, 185, 129, 0.12);
+            }
+            50% {
+                box-shadow: 0 0 4px rgba(255, 255, 255, 1), 0 0 15px rgba(14, 165, 233, 0.35), 0 0 26px rgba(16, 185, 129, 0.22);
+            }
+        }
+        .neon-card-cyangreen {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseCyanGreen 3s infinite ease-in-out;
+        }
+        .neon-card-cyangreen:hover {
+            box-shadow: 0 0 6px rgba(255, 255, 255, 1), 0 0 22px rgba(14, 165, 233, 0.55), 0 0 38px rgba(16, 185, 129, 0.38);
+            animation-play-state: paused;
+        }
+        .neon-card-cyangreen-float {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseCyanGreen 3s infinite ease-in-out;
+        }
+        .neon-card-cyangreen-float:hover {
+            transform: translateY(-6px) scale(1.015);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 1), 0 0 22px rgba(14, 165, 233, 0.55), 0 0 38px rgba(16, 185, 129, 0.38);
+            animation-play-state: paused;
+        }
+        /* 分業ルール個別：得意（Green）と苦手（Rose） */
+        @keyframes neonPulseGreen {
+            0%, 100% { box-shadow: 0 0 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(16, 185, 129, 0.2), 0 0 15px rgba(20, 184, 166, 0.1); }
+            50% { box-shadow: 0 0 4px rgba(255, 255, 255, 1), 0 0 14px rgba(16, 185, 129, 0.35), 0 0 25px rgba(20, 184, 166, 0.2); }
+        }
+        .neon-card-green {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseGreen 3s infinite ease-in-out;
+        }
+        .neon-card-green:hover {
+            transform: translateY(-6px) scale(1.015);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 1), 0 0 20px rgba(16, 185, 129, 0.55), 0 0 35px rgba(20, 184, 166, 0.35);
+            animation-play-state: paused;
+        }
+        @keyframes neonPulseRose {
+            0%, 100% { box-shadow: 0 0 2px rgba(255, 255, 255, 0.95), 0 0 8px rgba(244, 63, 94, 0.2), 0 0 15px rgba(236, 72, 153, 0.1); }
+            50% { box-shadow: 0 0 4px rgba(255, 255, 255, 1), 0 0 14px rgba(244, 63, 94, 0.35), 0 0 25px rgba(236, 72, 153, 0.2); }
+        }
+        .neon-card-rose {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseRose 3s infinite ease-in-out;
+        }
+        .neon-card-rose:hover {
+            transform: translateY(-6px) scale(1.015);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 1), 0 0 20px rgba(244, 63, 94, 0.55), 0 0 35px rgba(236, 72, 153, 0.35);
+            animation-play-state: paused;
+        }
+        /* ４大遵守ルール個別ネオンアニメーション */
+        @keyframes neonPulseAmber {
+            0%, 100% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.15), 0 0 10px rgba(245, 158, 11, 0.1); }
+            50% { box-shadow: 0 0 8px rgba(245, 158, 11, 0.35), 0 0 22px rgba(245, 158, 11, 0.2); }
+        }
+        .neon-card-amber {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseAmber 2.5s infinite ease-in-out;
+        }
+        .neon-card-amber:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.6), 0 0 32px rgba(245, 158, 11, 0.45);
+            animation-play-state: paused;
+        }
+        @keyframes neonPulseBlue {
+            0%, 100% { box-shadow: 0 0 4px rgba(59, 130, 246, 0.15), 0 0 10px rgba(59, 130, 246, 0.1); }
+            50% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.35), 0 0 22px rgba(59, 130, 246, 0.2); }
+        }
+        .neon-card-blue {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulseBlue 2.5s infinite ease-in-out;
+        }
+        .neon-card-blue:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 14px rgba(59, 130, 246, 0.6), 0 0 32px rgba(59, 130, 246, 0.45);
+            animation-play-state: paused;
+        }
+        @keyframes neonPulsePurple {
+            0%, 100% { box-shadow: 0 0 4px rgba(168, 85, 247, 0.15), 0 0 10px rgba(168, 85, 247, 0.1); }
+            50% { box-shadow: 0 0 8px rgba(168, 85, 247, 0.35), 0 0 22px rgba(168, 85, 247, 0.2); }
+        }
+        .neon-card-purple {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: neonPulsePurple 2.5s infinite ease-in-out;
+        }
+        .neon-card-purple:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 0 14px rgba(168, 85, 247, 0.6), 0 0 32px rgba(168, 85, 247, 0.45);
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- 共通ヘッダー -->
+    <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- ロゴ -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('intro')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-indigo to-pink-500 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                    <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">AI PORTAL</h1>
+                    <p class="text-[10px] text-slate-400 font-medium -mt-1 tracking-wider">INTERNAL AI NAVIGATOR</p>
+                </div>
+            </div>
+            <!-- ナビゲーションバー (デスクトップ) -->
+            <nav class="hidden md:flex space-x-1 p-1 bg-slate-100/80 rounded-xl">
+                <button onclick="navigateTo('intro')" id="nav-intro" class="nav-btn px-4 py-2 rounded-lg font-medium text-sm flex items-center space-x-1.5 transition-all">
+                    <span>🏠</span> <span>AI紹介</span>
+                </button>
+                <button onclick="navigateTo('gemini')" id="nav-gemini" class="nav-btn px-4 py-2 rounded-lg font-medium text-sm flex items-center space-x-1.5 transition-all">
+                    <span>💎</span> <span>Gemini活用</span>
+                </button>
+                <button onclick="navigateTo('copilot')" id="nav-copilot" class="nav-btn px-4 py-2 rounded-lg font-medium text-sm flex items-center space-x-1.5 transition-all">
+                    <span>💼</span> <span>Copilot活用</span>
+                </button>
+            </nav>
+            <!-- サポートボタン -->
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500 animate-ping"></span>AI稼働中
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- モバイル用ナビゲーション (画面最下部固定) -->
+    <div class="md:hidden fixed bottom-4 left-4 right-4 z-50 bg-white/95 backdrop-blur-lg shadow-xl border border-slate-100 rounded-2xl px-4 py-2 flex justify-around">
+        <button onclick="navigateTo('intro')" id="mob-nav-intro" class="mob-nav-btn flex flex-col items-center space-y-0.5 py-1 px-3 rounded-xl transition-all">
+            <span class="text-xl">🏠</span><span class="text-[10px] font-bold">AI紹介</span>
+        </button>
+        <button onclick="navigateTo('gemini')" id="mob-nav-gemini" class="mob-nav-btn flex flex-col items-center space-y-0.5 py-1 px-3 rounded-xl transition-all">
+            <span class="text-xl">💎</span><span class="text-[10px] font-bold">Gemini</span>
+        </button>
+        <button onclick="navigateTo('copilot')" id="mob-nav-copilot" class="mob-nav-btn flex flex-col items-center space-y-0.5 py-1 px-3 rounded-xl transition-all">
+            <span class="text-xl">💼</span><span class="text-[10px] font-bold">Copilot</span>
+        </button>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <main class="flex-grow pb-24 md:pb-12">
+
+        <!-- ==========================================① AI紹介ページ（トップ） -->
+        <div id="page-intro" class="page-transition active max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
+            <!-- ヒーローセクション -->
+            <div class="text-center space-y-4 max-w-3xl mx-auto pt-4">
+                <span class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide text-brand-indigo bg-indigo-50 border border-indigo-100 uppercase">AIポータルへようこそ</span>
+                <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 leading-tight">悩んだら、まず開く。<br><span class="bg-gradient-to-r from-brand-indigo via-purple-600 to-pink-500 bg-clip-text text-transparent">Triveの最強AI活用ポータル</span></h1>
+                <p class="text-lg text-slate-500 font-light leading-relaxed">AIを「学ぶ」のではなく、「今すぐ使う」。今日からの業務効率を劇的に高めるプロンプトや、2大ツールの使い分け、安心のセキュリティルールを1箇所にまとめました。</p>
+            </div>
+
+            <!-- ① AIに向いている仕事・向いていない仕事 -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">1. AIとの賢い分業ルール</h2>
+                    <p class="text-slate-500 text-sm mt-1">何でもできるわけではありません。AIの得意と苦手を知り、効果的に指示しましょう。</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <!-- AIが得意 -->
+                    <div class="bg-gradient-to-br from-emerald-300 via-teal-400 to-indigo-500 p-[2.5px] rounded-2xl neon-card-green flex shadow-sm">
+                        <div class="bg-white rounded-[12.5px] p-5 w-full h-full relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-200/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                            <div class="flex items-center space-x-2 mb-4 relative z-10">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">💡</div>
+                                <h3 class="text-base font-black text-emerald-800 tracking-tight">AIが『大得意』な仕事</h3>
+                            </div>
+                            <ul class="space-y-3 relative z-10">
+                                <li class="flex items-start space-x-2.5">
+                                    <span class="text-emerald-500 text-sm mt-0.5">✓</span>
+                                    <div><strong class="text-slate-800 block text-sm font-bold">アイデア出し・壁打ち</strong><span class="text-[11px] text-slate-500 leading-normal block">新しい企画の切り口や切り替え案を10秒で数十個出す</span></div>
+                                </li>
+                                <li class="flex items-start space-x-2.5">
+                                    <span class="text-emerald-500 text-sm mt-0.5">✓</span>
+                                    <div><strong class="text-slate-800 block text-sm font-bold">リサーチ・要約</strong><span class="text-[11px] text-slate-500 leading-normal block">長いPDF、英語の記事、長文メールの要点を瞬時に抽出</span></div>
+                                </li>
+                                <li class="flex items-start space-x-2.5">
+                                    <span class="text-emerald-500 text-sm mt-0.5">✓</span>
+                                    <div><strong class="text-slate-800 block text-sm font-bold">文章作成・資料構成</strong><span class="text-[11px] text-slate-500 leading-normal block">謝罪メール、社内報、プレゼン用のアジェンダ等の下案作成</span></div>
+                                </li>
+                                <li class="flex items-start space-x-2.5">
+                                    <span class="text-emerald-500 text-sm mt-0.5">✓</span>
+                                    <div><strong class="text-slate-800 block text-sm font-bold">コード生成・データ整理</strong><span class="text-[11px] text-slate-500 leading-normal block">ExcelマクロやWebコードの生成、バラバラな住所情報の整形</span></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- AIが苦手 -->
+                    <div class="bg-gradient-to-br from-rose-300 via-pink-400 to-purple-600 p-[2.5px] rounded-2xl neon-card-rose flex shadow-sm">
+                        <div class="bg-white rounded-[13.5px] p-5 w-full h-full relative overflow-hidden flex flex-col justify-between">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-rose-200/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                            <div>
+                                <div class="flex items-center space-x-2 mb-4 relative z-10">
+                                    <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-sm">⚠️</div>
+                                    <h3 class="text-base font-black text-rose-800 tracking-tight">AIが『苦手』な仕事</h3>
+                                </div>
+                                <ul class="space-y-3 relative z-10">
+                                    <li class="flex items-start space-x-2.5">
+                                        <span class="text-rose-400 text-sm mt-0.5">✗</span>
+                                        <div><strong class="text-slate-800 block text-sm font-bold">最終判断・契約判断</strong><span class="text-[11px] text-slate-500 leading-normal block">責任が伴う法的な判断や、会社としての最終決定</span></div>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <span class="text-rose-400 text-sm mt-0.5">✗</span>
+                                        <div><strong class="text-slate-800 block text-sm font-bold">事実・数値の100%保証</strong><span class="text-[11px] text-slate-500 leading-normal block">AIはもっともらしい嘘（ハルシネーション）をつくことがあります</span></div>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <span class="text-rose-400 text-sm mt-0.5">✗</span>
+                                        <div><strong class="text-slate-800 block text-sm font-bold">最新情報の保証（検索なし時）</strong><span class="text-[11px] text-slate-500 leading-normal block">Web検索をオフにした状態では、直近数ヶ月の出来事は知りません</span></div>
+                                    </li>
+                                    <li class="flex items-start space-x-2.5">
+                                        <span class="text-rose-400 text-sm mt-0.5">✗</span>
+                                        <div><strong class="text-slate-800 block text-sm font-bold">細微な感情のすり合わせ</strong><span class="text-[11px] text-slate-500 leading-normal block">高度なニュアンスや、社内の繊細な人間関係の調整</span></div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ② プロンプト3箇条 -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">2. 劇的に成果が変わる！プロンプト3箇条</h2>
+                    <p class="text-slate-500 text-sm mt-1">AIへの「指示の出し方」を少し変えるだけで、返ってくる回答の質が数倍になります。</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <!-- ① Role -->
+                    <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[2px] rounded-2xl neon-card flex">
+                        <div class="bg-white rounded-[13.5px] py-4 px-5 flex flex-col justify-between w-full">
+                            <div>
+                                <h3 class="text-base font-black text-slate-800 leading-snug mb-2">① Role<br><span class="text-[11px] text-slate-400 font-bold tracking-wider">役割を明確に</span></h3>
+                                <p class="text-xs text-slate-500 leading-normal">「あなたはプロの編集者です」「あなたは10年目の営業マネージャーです」のように、AIに役割を与えてください。回答のトーンと視点が固定されます。</p>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-slate-100 bg-slate-50 p-2.5 rounded-lg text-[10px] text-indigo-600 font-mono">例: 「優秀な人事企画担当として...」</div>
+                        </div>
+                    </div>
+                    <!-- ② Constraints -->
+                    <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[2px] rounded-2xl neon-card flex">
+                        <div class="bg-white rounded-[13.5px] py-4 px-5 flex flex-col justify-between w-full">
+                            <div>
+                                <h3 class="text-base font-black text-slate-800 leading-snug mb-2">② Constraints<br><span class="text-[11px] text-slate-400 font-bold tracking-wider">制約条件の指定</span></h3>
+                                <p class="text-xs text-slate-500 leading-normal">「文字数は300字以内」「専門用語は使わず、中学生でもわかる表現で」「ネガティブな表現は避ける」など、守るべき境界線を明示してください。</p>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-slate-100 bg-slate-50 p-2.5 rounded-lg text-[10px] text-indigo-600 font-mono">例: 「箇条書きで3点、要約して」</div>
+                        </div>
+                    </div>
+                    <!-- ③ Format -->
+                    <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-[2px] rounded-2xl neon-card flex">
+                        <div class="bg-white rounded-[13.5px] py-4 px-5 flex flex-col justify-between w-full">
+                            <div>
+                                <h3 class="text-base font-black text-slate-800 leading-snug mb-2">③ Format<br><span class="text-[11px] text-slate-400 font-bold tracking-wider">出力形式の指定</span></h3>
+                                <p class="text-xs text-slate-500 leading-normal">「表形式で」「Markdown形式で」「【挨拶】【課題】【提案】の構成で」のように、欲しいアウトプットの見た目を最初に指定するのがコツです。</p>
+                            </div>
+                            <div class="mt-3 pt-3 border-t border-slate-50 bg-slate-50 p-2.5 rounded-lg text-[10px] text-indigo-600 font-mono">例: 「列Aを項目、列Bを概要とする表で」</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- つなぎのキャッチコピー -->
+            <section class="py-6 text-center max-w-3xl mx-auto border-y border-dashed border-indigo-100 -mb-14 relative z-10">
+                <div class="inline-flex items-center space-x-2 bg-rose-50 text-rose-600 px-3 py-1 rounded-full text-xs font-bold mb-4">
+                    <span>🤔</span> <span>素朴な疑問</span>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">「プロンプト3箇条を使っても<span class="bg-gradient-to-r from-rose-500 to-orange-500 bg-clip-text text-transparent">AIは嘘をつく？！</span>」</h3>
+                <p class="text-sm text-slate-500 mt-3 leading-relaxed">プロンプトを工夫することで、AIの回答精度は大きく向上します。しかし、それでもAIが事実ではない内容を、もっともらしく回答してしまうことがあります。まずは、その理由を理解することがAIを上手に活用する第一歩です。</p>
+                <div class="flex justify-center mt-5">
+                    <div class="animate-bounce text-slate-300">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ③ ハルシネーションについて -->
+            <section class="grid lg:grid-cols-12 gap-8 items-start pt-4 relative z-10">
+                <div class="lg:col-span-5 space-y-4">
+                    <span class="text-rose-600 bg-rose-50 border border-rose-100 text-xs px-3 py-1 rounded-full font-bold">要確認</span>
+                    <h2 class="text-2xl lg:text-3xl font-black text-slate-900 leading-tight">３. ハルシネーションを理解する</h2>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-4">ハルシネーション（幻覚）とは、AIがもっともらしく嘘を生成する現象です。AIは確率的に「次に続く最も自然な言葉」を繋ぎ合わせているため、誤った情報を自信満々に出力することがあります。</p>
+                    
+                    <!-- 発生理由カード -->
+                    <div class="bg-gradient-to-br from-amber-300 to-orange-400 p-[2px] rounded-xl neon-card-yellow">
+                        <div class="bg-white rounded-[10px] p-4 space-y-3">
+                            <h4 class="text-sm font-bold text-slate-800 flex items-center space-x-2"><span class="text-amber-500">⚡</span><span>発生する主な2つの理由</span></h4>
+                            <ol class="space-y-2.5 text-xs text-slate-600 list-decimal pl-4 leading-relaxed">
+                                <li><strong class="text-slate-800">役に立とうとして推測する:</strong>空白を嫌うため、情報が足りないときも文脈から推測して勝手に作り上げてしまいます。</li>
+                                <li><strong class="text-slate-800">学習データに誤りがある:</strong>Web上の古い情報、誤情報、または矛盾する情報をそのまま学習していることがあります。</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ハルシネーションを減らす5つのコツ -->
+                <div class="lg:col-span-7 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-800">ハルシネーションを減らす5つの実践アプローチ</h3>
+                    <div class="space-y-3">
+                        <!-- コツ 1 -->
+                        <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-xl neon-card-cyangreen overflow-hidden">
+                            <div class="bg-white rounded-[10px] overflow-hidden">
+                                <button onclick="toggleAccordion('hallucination-1')" class="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition-all">
+                                    <span class="font-bold text-sm text-slate-800 flex items-center"><span class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 text-xs flex items-center justify-center font-bold mr-3">1</span>根拠となる資料（コンテキスト）を直接与える</span>
+                                    <span id="arrow-hallucination-1" class="transform transition-transform text-slate-400">▼</span>
+                                </button>
+                                <div id="content-hallucination-1" class="hidden px-5 pb-4 text-xs text-slate-500 border-t border-slate-50 pt-3 space-y-2">
+                                    <p>最も有効な手段です。「以下の情報を読み込んで、その中だけで答えてください」と指示します。情報不足による推測を完全にシャットアウトします。</p>
+                                    <div class="bg-slate-900 text-slate-300 p-3 rounded-lg font-mono flex justify-between items-center">
+                                        <span class="truncate">#指示: 以下の[社内規定]のみに基づき質問に答えてください。...</span>
+                                        <button onclick="copyText('hallucination-template-1')" id="hallucination-template-1-btn" class="text-indigo-400 font-bold shrink-0 hover:text-indigo-300 ml-2">コピー</button>
+                                        <input type="hidden" id="hallucination-template-1" value="以下の[参考資料]に基づき、質問に回答してください。資料に記載のないことは、絶対に推測して回答せず『情報がないため回答できません』と述べてください。">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- コツ 2 -->
+                        <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-xl neon-card-cyangreen overflow-hidden">
+                            <div class="bg-white rounded-[10px] overflow-hidden">
+                                <button onclick="toggleAccordion('hallucination-2')" class="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition-all">
+                                    <span class="font-bold text-sm text-slate-800 flex items-center"><span class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 text-xs flex items-center justify-center font-bold mr-3">2</span>「分からない時は分からないと言って」と指示する</span>
+                                    <span id="arrow-hallucination-2" class="transform transition-transform text-slate-400">▼</span>
+                                </button>
+                                <div id="content-hallucination-2" class="hidden px-5 pb-4 text-xs text-slate-500 border-t border-slate-50 pt-3 space-y-2">
+                                    <p>AIは「空白」を嫌うため,知ったかぶりをします。この一言を加えるだけで、知らないことは「情報がありません」と認めてくれる確率が急上昇します。</p>
+                                    <div class="bg-slate-900 text-slate-300 p-3 rounded-lg font-mono flex justify-between items-center">
+                                        <span class="truncate">#制約: 事実が確認できない場合は、推測せず『不明』と回答すること。</span>
+                                        <button onclick="copyText('hallucination-template-2')" id="hallucination-template-2-btn" class="text-indigo-400 font-bold shrink-0 hover:text-indigo-300 ml-2">コピー</button>
+                                        <input type="hidden" id="hallucination-template-2" value="情報に確証がない場合、または事実と異なる可能性がある場合は、嘘の情報を出力せず、率直に『不明』または『学習データに基づき推測できません』と回答してください。">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- コツ 3 -->
+                        <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-xl neon-card-cyangreen overflow-hidden">
+                            <div class="bg-white rounded-[10px] overflow-hidden">
+                                <button onclick="toggleAccordion('hallucination-3')" class="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition-all">
+                                    <span class="font-bold text-sm text-slate-800 flex items-center"><span class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 text-xs flex items-center justify-center font-bold mr-3">3</span>思考プロセスを出力させる（ステップ・バイ・ステップ）</span>
+                                    <span id="arrow-hallucination-3" class="transform transition-transform text-slate-400">▼</span>
+                                </button>
+                                <div id="content-hallucination-3" class="hidden px-5 pb-4 text-xs text-slate-500 border-t border-slate-50 pt-3 space-y-2">
+                                    <p>「段階的に思考し、まず理由を整理した後に結論を出してください」と指示すると、AI自身が論理崩壊に気づき、正確な回答を出せるようになります。</p>
+                                    <div class="bg-slate-950 text-slate-300 p-3 rounded-lg font-mono flex justify-between items-center">
+                                        <span class="truncate">#指示: 結論を導くステップを順を追って書き出した上で、最終結論を提示して。</span>
+                                        <button onclick="copyText('hallucination-template-3')" id="hallucination-template-3-btn" class="text-indigo-400 font-bold shrink-0 hover:text-indigo-300 ml-2">コピー</button>
+                                        <input type="hidden" id="hallucination-template-3" value="この問題を解決するために必要なプロセスを1ステップずつ論理的に整理してください。その思考ステップを出力した後に、最終回答をまとめてください。">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- コツ 4 -->
+                        <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-xl neon-card-cyangreen overflow-hidden">
+                            <div class="bg-white rounded-[10px] overflow-hidden">
+                                <button onclick="toggleAccordion('hallucination-4')" class="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition-all">
+                                    <span class="font-bold text-sm text-slate-800 flex items-center"><span class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 text-xs flex items-center justify-center font-bold mr-3">4</span>あえて「批判的な検証役」を頼む</span>
+                                    <span id="arrow-hallucination-4" class="transform transition-transform text-slate-400">▼</span>
+                                </button>
+                                <div id="content-hallucination-4" class="hidden px-5 pb-4 text-xs text-slate-500 border-t border-slate-50 pt-3 space-y-2">
+                                    <p>AIに自分の回答やアイデアを客観的に批判・検証させます。肯定的な意見ばかりでなく多角的なチェックが入るため、誤った情報を炙り出しやすくなります。</p>
+                                    <div class="bg-slate-950 text-slate-300 p-3 rounded-lg font-mono flex justify-between items-center">
+                                        <span class="truncate">#指示: 以上の提案に対し、あえて批判的な検証役として懸念点や論理的矛盾を3つ指摘してください。</span>
+                                        <button onclick="copyText('hallucination-template-4')" id="hallucination-template-4-btn" class="text-indigo-400 font-bold shrink-0 hover:text-indigo-300 ml-2">コピー</button>
+                                        <input type="hidden" id="hallucination-template-4" value="提出した内容に対して、あえて批判的な第三者の立場として、客観的な懸念点や論理的な矛盾、または事実誤認（ハルシネーション）が含まれていないか徹底的に検証し、指摘してください。">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- コツ 5 -->
+                        <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-xl neon-card-cyangreen overflow-hidden">
+                            <div class="bg-white rounded-[10px] overflow-hidden">
+                                <button onclick="toggleAccordion('hallucination-5')" class="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition-all">
+                                    <span class="font-bold text-sm text-slate-800 flex items-center"><span class="w-6 h-6 rounded-lg bg-sky-50 text-sky-600 text-xs flex items-center justify-center font-bold mr-3">5</span>出典や根拠の提示を求める</span>
+                                    <span id="arrow-hallucination-5" class="transform transition-transform text-slate-400">▼</span>
+                                </button>
+                                <div id="content-hallucination-5" class="hidden px-5 pb-4 text-xs text-slate-500 border-t border-slate-50 pt-3 space-y-2">
+                                    <p>「回答のどの部分が、添付した資料のどの行から抽出されたかを明示してください」と指示すると、AIが勝手な生成を自ら抑制し、ソースに固執するようになります。</p>
+                                    <div class="bg-slate-900 text-slate-300 p-3 rounded-lg font-mono flex justify-between items-center">
+                                        <span class="truncate">#条件: 各回答について、参照した記述の箇所（出典）を必ず明示してください。</span>
+                                        <button onclick="copyText('hallucination-template-5')" id="hallucination-template-5-btn" class="text-indigo-400 font-bold shrink-0 hover:text-indigo-300 ml-2">コピー</button>
+                                        <input type="hidden" id="hallucination-template-5" value="あなたの主張には必ず根拠を添えてください。提示した参考資料の中から、その答えを裏付ける一文やキーワードを直接引用し、『根拠：〜〜』として提示してください。">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ④ ハルシネーション削減プロンプトメーカー -->
+            <section class="max-w-6xl mx-auto">
+                <div class="bg-gradient-to-br from-sky-400 via-indigo-500 to-pink-500 p-[4px] rounded-3xl neon-card-concept flex shadow-sm">
+                    <div class="bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/95 backdrop-blur-md text-slate-800 rounded-[21px] p-5 sm:p-6 space-y-5 relative overflow-hidden w-full">
+                        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-purple-200/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-200/20 rounded-full blur-3xl"></div>
+                        <div class="relative z-10 space-y-5">
+                            <div class="space-y-1.5">
+                                <span class="text-xs font-bold text-brand-indigo tracking-wider uppercase">INTERACTIVE TOOL</span>
+                                <h3 class="text-2xl font-black text-slate-900 leading-tight">ハルシネーション削減プロンプトメーカー</h3>
+                                <p class="text-xs text-slate-500 leading-relaxed">以下のフォームに入力するだけで、ハルシネーションを極限まで減らした「コピペしてすぐ使える高品質プロンプト」を即座に合成します。</p>
+                            </div>
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                                <!-- 入力エリア -->
+                                <div class="lg:col-span-7 space-y-4 bg-white/70 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-slate-100/80 shadow-inner flex flex-col justify-between">
+                                    <div class="space-y-3">
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-600 mb-1">AIに与える役割（Role）</label>
+                                                <input id="pm-role" type="text" placeholder="例: 優秀な人事コンサルタント" class="w-full bg-white/90 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-indigo transition-all shadow-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-600 mb-1">参考情報（Context）<span class="text-slate-400 font-normal">（任意）</span></label>
+                                                <input id="pm-context-input" type="text" placeholder="例: 当社は従業員数150名のスタートアップです" class="w-full bg-white/90 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-indigo transition-all shadow-sm">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-600 mb-1">依頼・タスク内容（Task）</label>
+                                            <textarea id="pm-task" rows="2" placeholder="例: 当社の週休3日制導入に向けたメリットとデメリットをまとめてください。" class="w-full bg-white/90 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-indigo transition-all shadow-sm"></textarea>
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <label class="block text-[11px] font-bold text-slate-600">ハルシネーション抑制オプション（複数選択可）</label>
+                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50/50 p-2.5 rounded-xl border border-slate-100">
+                                                <label class="flex items-center space-x-2 text-[10px] text-slate-600 cursor-pointer">
+                                                    <input id="pm-opt-evidence" type="checkbox" checked class="rounded border-slate-300 bg-white text-brand-indigo focus:ring-brand-indigo">
+                                                    <span>根拠・ソースの提示を求める</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2 text-[10px] text-slate-600 cursor-pointer">
+                                                    <input id="pm-opt-unknown" type="checkbox" checked class="rounded border-slate-300 bg-white text-brand-indigo focus:ring-brand-indigo">
+                                                    <span>分からない時は「不明」と制限</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2 text-[10px] text-slate-600 cursor-pointer">
+                                                    <input id="pm-opt-process" type="checkbox" class="rounded border-slate-300 bg-white text-brand-indigo focus:ring-brand-indigo">
+                                                    <span>結論の前に思考プロセス表示</span>
+                                                </label>
+                                                <label class="flex items-center space-x-2 text-[10px] text-slate-600 cursor-pointer">
+                                                    <input id="pm-opt-critic" type="checkbox" class="rounded border-slate-300 bg-white text-brand-indigo focus:ring-brand-indigo">
+                                                    <span>あえて「批判的検証役」を頼む</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onclick="generatePrompt()" class="w-full mt-3 py-3 bg-gradient-to-r from-sky-400 via-brand-indigo to-pink-500 hover:opacity-95 active:scale-[0.99] rounded-xl text-xs font-black tracking-widest text-white shadow-md shadow-indigo-500/10 transition-all flex items-center justify-center space-x-2 uppercase">
+                                        <span>✨ GENERATE SECURE PROMPT</span>
+                                    </button>
+                                </div>
+                                <!-- 出力エリア -->
+                                <div class="lg:col-span-5 bg-slate-950 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between shadow-lg min-h-[220px]">
+                                    <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-2 shrink-0">
+                                        <span class="text-[10px] font-black text-indigo-400 flex items-center tracking-wider">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping mr-1.5"></span>OUTPUT: SECURE PROMPT
+                                        </span>
+                                        <button onclick="copyGeneratedPrompt()" id="copy-prompt-btn" class="text-[9px] bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 py-1 px-2.5 rounded font-bold transition-all flex items-center space-x-1">
+                                            <span>📋</span> <span>COPY PROMPT</span>
+                                        </button>
+                                    </div>
+                                    <textarea id="generated-prompt-output" readonly class="flex-grow w-full bg-transparent text-slate-300 font-mono text-[10px] leading-relaxed resize-none focus:outline-none min-h-[140px]" placeholder="Above parameters will assemble into a secure system prompt. Click &quot;GENERATE SECURE PROMPT&quot; to build."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ⑤ CORE CONCEPT「AIは『打率7割の新人アシスタント』」 -->
+            <section class="max-w-4xl mx-auto">
+                <div class="bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-500 p-[4px] rounded-3xl neon-card-concept flex shadow-sm">
+                    <div class="bg-gradient-to-br from-white/95 via-purple-50/90 to-indigo-50/95 backdrop-blur-md text-slate-800 rounded-[21px] p-5 sm:p-6 space-y-3 relative overflow-hidden w-full">
+                        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-purple-200/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-200/20 rounded-full blur-3xl"></div>
+                        <div class="relative z-10 space-y-2.5">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-brand-indigo text-xs font-extrabold tracking-widest uppercase">CORE CONCEPT</span>
+                            </div>
+                            <h4 class="text-lg sm:text-xl font-black text-slate-900 leading-tight">AIは「打率7割の新人アシスタント」</h4>
+                            <p class="text-sm text-slate-600 leading-relaxed font-semibold">AIを最初から「完璧なツール」だと思って使い始めると、たった1つの間違い（嘘）を見ただけで「使えない」と拒絶してしまいがちです。適切な付き合い方を身につけましょう。</p>
+                            <p class="text-sm text-slate-600 leading-relaxed">AIを「ベテラン社員」ではなく、「ポテンシャルは高いが、時々知ったかぶりをする新人アシスタント」だと思ってください。10回中7回は素晴らしい成果物を1秒で出してくれますが、3回はピントのずれたことを言います。「使えない」と切り捨てるのではなく、「人間が先輩として赤ペンを入れて育てる（修正する）」というスタンスで付き合うと、驚くほど仕事が楽になります。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ⑥ AI利用時の注意 -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">4. 社内セキュリティ＆利用上の４大遵守ルール</h2>
+                    <p class="text-slate-500 text-sm mt-1">安心安全に社内でAIを運用するために、これだけは必ず守ってください。</p>
+                </div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- ルール 1 -->
+                    <div class="bg-gradient-to-br from-rose-500 to-red-500 p-[3.5px] rounded-2xl neon-card-rose flex">
+                        <div class="bg-white rounded-[12.5px] p-5 flex flex-col justify-between w-full h-full">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <span class="text-lg">🔒</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">個人・機密情報の厳禁</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">顧客データ、パスワード、個人を特定できる情報、未公開のインサイダーに関わる情報は、絶対に入力しないでください。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ルール 2 -->
+                    <div class="bg-gradient-to-br from-amber-500 to-orange-500 p-[3.5px] rounded-2xl neon-card-amber flex">
+                        <div class="bg-white rounded-[12.5px] p-5 flex flex-col justify-between w-full h-full">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <span class="text-lg">👀</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">人間の目による最終チェック</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">AIが生成したドキュメントやコード、計算データは、お客様や上司へ送る前に必ず本人の目と耳で二重確認してください。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ルール 3 -->
+                    <div class="bg-gradient-to-br from-blue-500 to-brand-indigo p-[3.5px] rounded-2xl neon-card-blue flex">
+                        <div class="bg-white rounded-[12.5px] p-5 flex flex-col justify-between w-full h-full">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <span class="text-lg">🏢</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">社内認定ツールの使用</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">社外の無料個人アカウントではなく、会社が契約している法人用ポータル、または検証済みツールのみをご使用ください。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ルール 4 -->
+                    <div class="bg-gradient-to-br from-purple-500 to-pink-500 p-[3.5px] rounded-2xl neon-card-purple flex">
+                        <div class="bg-white rounded-[12.5px] p-5 flex flex-col justify-between w-full h-full">
+                            <div>
+                                <div class="flex items-center space-x-2 mb-3">
+                                    <span class="text-lg">⚖️</span>
+                                    <h4 class="font-bold text-slate-900 text-sm">著作権の侵害防止</h4>
+                                </div>
+                                <p class="text-xs text-slate-500 leading-relaxed">既存企業のロゴ、他人の著作物、特定の小説やプログラムをそのまま完全コピーさせて出力に使うことは避けてください。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ⑦ GeminiとCopilotの違い -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">5. どっちを選ぶ？2大AI的徹底比較</h2>
+                    <p class="text-slate-500 text-sm mt-1">あなたの現在のタスクに合わせて、最適なツールを選択しましょう。</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <!-- Gemini 誘導 -->
+                    <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-3xl neon-card-cyangreen-float flex shadow-sm">
+                        <div class="bg-white rounded-[22px] p-6 w-full h-full relative overflow-hidden flex flex-col justify-between group">
+                            <div class="absolute -right-8 -top-8 w-24 h-24 bg-gradient-to-tr from-cyan-500 to-blue-500 opacity-10 rounded-full blur-xl group-hover:scale-125 transition-all"></div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-brand-geminiBlue bg-blue-50 px-3 py-1 rounded-full border border-blue-100">Googleの次世代AI</span>
+                                    <span class="text-2xl">💎</span>
+                                </div>
+                                <h3 class="text-2xl font-black text-slate-900">Gemini</h3>
+                                <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">THINK / RESEARCH / CREATE</p>
+                                <h4 class="font-extrabold text-sm text-brand-geminiBlue">「考える・調べる・創る」を支援するAI</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">Geminiは、文章作成や情報収集、アイデア出しなど、思考からアウトプットまでをサポートする生成AIです。日々の業務から創造的な作業まで幅広く活用でき、自分専用AI「Gems」や「NotebookLM」などの機能を活用することで、さらに生産性を高めることができます。</p>
+                            </div>
+                            <button onclick="navigateTo('gemini')" class="w-full mt-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2">
+                                <span>💎 Gemini 活用ガイドへ</span><span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Copilot 誘導 -->
+                    <div class="bg-gradient-to-br from-sky-300 via-cyan-400 to-emerald-400 p-[2px] rounded-3xl neon-card-cyangreen-float flex shadow-sm">
+                        <div class="bg-white rounded-[22px] p-6 w-full h-full relative overflow-hidden flex flex-col justify-between group">
+                            <div class="absolute -right-8 -top-8 w-24 h-24 bg-gradient-to-tr from-blue-600 to-teal-500 opacity-10 rounded-full blur-xl group-hover:scale-125 transition-all"></div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-bold text-brand-copilotBlue bg-sky-50 px-3 py-1 rounded-full border border-sky-100">Microsoft365統合AI</span>
+                                    <span class="text-2xl">💼</span>
+                                </div>
+                                <h3 class="text-2xl font-black text-slate-900">Copilot</h3>
+                                <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">WORK WITH MICROSOFT 365</p>
+                                <h4 class="font-extrabold text-sm text-brand-copilotBlue">Microsoft 365をもっと便利にするAI</h4>
+                                <p class="text-xs text-slate-500 leading-relaxed">Copilotは、Word・Excel・PowerPointなどMicrosoft 365アプリの中で利用できる生成AIです。アプリを切り替えることなく、その場で文書作成やデータ分析、資料作成をサポートします。</p>
+                            </div>
+                            <button onclick="navigateTo('copilot')" class="w-full mt-6 py-2.5 bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2">
+                                <span>💼 Copilot 活用ガイドへ</span><span>→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 比較表 -->
+                <div class="bg-white border border-slate-100 rounded-2xl shadow-sm max-w-4xl mx-auto overflow-hidden">
+                    <div class="bg-slate-50 p-4 border-b border-slate-100 text-center">
+                        <h4 class="font-bold text-sm text-slate-800">機能比較サマリー</h4>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100/50 text-slate-500 uppercase tracking-wider font-bold">
+                                <tr>
+                                    <th class="p-4">比較項目</th>
+                                    <th class="p-4 text-brand-geminiBlue">💎 Gemini</th>
+                                    <th class="p-4 text-brand-copilotBlue">💼 Copilot</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-700">得意な領域</td>
+                                    <td class="p-4 text-slate-600">ブレスト、超長文要約、最新リサーチ、プログラム開発</td>
+                                    <td class="p-4 text-slate-600">Office文書作成、データ分析、アプリを跨ぐ横断検索</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-700">Microsoft製品連携</td>
+                                    <td class="p-4 text-slate-600">限定的（テキストをコピペして使用）</td>
+                                    <td class="p-4 font-bold text-emerald-600">完全自動（Word, Excel, PPTの中で直接起動）</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-700">Google Workspace連携</td>
+                                    <td class="p-4 font-bold text-emerald-600">完全自動（カレンダー, Gmail, スプレッドシート）</td>
+                                    <td class="p-4 text-slate-600">限定的</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-4 font-bold text-slate-700">コンテキスト窓サイズ</td>
+                                    <td class="p-4 text-slate-600">極めて広い（本一冊分のドキュメントや動画もOK）</td>
+                                    <td class="p-4 text-slate-600">標準的（主要なドキュメント複数ファイル対応）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ページ下部ナビゲーション -->
+            <div class="border-t border-slate-100 pt-10 flex justify-end">
+                <button onclick="navigateTo('gemini')" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-xl font-bold text-sm hover:from-cyan-600 hover:to-blue-700 shadow-md shadow-blue-100 active:scale-95 transition-all flex items-center space-x-2">
+                    <span>次のページ：💎 Gemini 活用ガイド</span><span>→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==========================================② Gemini活用ページ -->
+        <div id="page-gemini" class="page-transition page-enter hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
+            <!-- ヒーロー -->
+            <div class="text-center space-y-4 max-w-3xl mx-auto pt-4">
+                <span class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide text-brand-geminiBlue bg-blue-50 border border-blue-100 uppercase">Google Intelligent Partner</span>
+                <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 leading-tight">「考える・調べる・創る」を<br><span class="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">極限まで高速化する AI</span></h1>
+                <p class="text-lg text-slate-500 font-light leading-relaxed">Geminiは、圧倒的な「記憶力（コンテキストサイズ）」と「Googleの最新検索力」を併せ持ちます。アイデアを出し合い、世界中を調べ、あなたの最高の下書きを作る知的パートナーです。</p>
+                <div class="flex flex-wrap justify-center gap-2 pt-2">
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">⚡ 膨大な長文読み込み</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">🔍 高精度Google検索連動</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">💬 柔軟なブレスト相手</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">📝 超高速ドラフト作成</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">💻 プログラム開発支援</span>
+                </div>
+            </div>
+
+            <!-- 今日から使える基本活用4選 -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">1. 今日から使えるGemini基本活用４選</h2>
+                    <p class="text-slate-500 text-sm mt-1">これだけでいつものデスクワークが驚くほど時短になります。</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- 活用 1: 文章作成 -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">✍️</div>
+                            <h3 class="font-bold text-slate-800 text-base">① 文章作成</h3>
+                            <p class="text-xs text-slate-400">ドラフト一瞬、添削おまかせ</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">新商品のプレスリリース、お客様へのアポ打診メール、お詫び状など。用途と大枠を教えれば自然な日本語で生成。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('gemini-write')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('gemini-write-p')" class="py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-[10px] font-bold text-brand-geminiBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 活用 2: 要約 -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-bold">📄</div>
+                            <h3 class="font-bold text-slate-800 text-base">② 瞬時要約</h3>
+                            <p class="text-xs text-slate-400">数万文字を一発で整理</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">厚みのある社内マニュアルや英語の技術文書、市場レポートのPDFをコピペするだけで、箇条書きで分かりやすく要約。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('gemini-summary')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('gemini-summary-p')" class="py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-[10px] font-bold text-brand-geminiBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 活用 3: 議事録 -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg font-bold">⏱️</div>
+                            <h3 class="font-bold text-slate-800 text-base">③ 議事録作成</h3>
+                            <p class="text-xs text-slate-400">文字起こしを構造化</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">TeamsやZoomから出力された未整理の「文字起こしテキスト」を渡し、【決定事項】【ToDo】【保留課題】に美しく分類。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('gemini-meeting')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('gemini-meeting-p')" class="py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-[10px] font-bold text-brand-geminiBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 活用 4: 壁打ち -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-pink-50 text-pink-600 flex items-center justify-center text-lg font-bold">🗣️</div>
+                            <h3 class="font-bold text-slate-800 text-base">④ アイデア壁打ち</h3>
+                            <p class="text-xs text-slate-400">多角的視点から企画に磨き</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">「社内イベントの斬新な企画案を5つ作って」「この提案書に突っ込みどころはある？」など、最高の思考パートナーになります。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('gemini-brainstorm')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('gemini-brainstorm-p')" class="py-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-[10px] font-bold text-brand-geminiBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 生産性が上がる応用3選 -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">2. 生産性が上がるGemini応用３選</h2>
+                    <p class="text-slate-500 text-sm mt-1">さらに一歩進んだ、Gemini固有の強力な拡張ツール群です。</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Gems -->
+                    <div onclick="showDetailModal('gems')" class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm premium-card cursor-pointer group flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">🛠️</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-0.5 rounded-full">カスタムAI</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-geminiBlue transition-all">Gems (ジェムズ)</h3>
+                            <p class="text-xs text-brand-geminiBlue font-bold">AIの"性格"や"作業ルール"を固定する</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">毎回同じ長い指示（例：翻訳ルールやプログラム書き換え規定）を記述する必要はありません。専用のカスタムチャットを作ってワンクリックで共有可能です。</p>
+                        </div>
+                        <span class="text-[10px] text-right font-bold text-brand-geminiBlue group-hover:underline mt-4 block">🔍 クリックして詳細を表示</span>
+                    </div>
+                    <!-- NotebookLM -->
+                    <div onclick="showDetailModal('notebooklm')" class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm premium-card cursor-pointer group flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">📚</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-0.5 rounded-full">社内ナレッジ</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-geminiBlue transition-all">NotebookLM</h3>
+                            <p class="text-xs text-brand-geminiBlue font-bold">AIに任意の"知識"を完璧に覚えさせる</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">社内マニュアルや過去の膨大な議事録PDFを放り込むだけで、そのフォルダ全体を丸ごと理解したあなた専用の超高精度AIアシスタントをわずか1分で構築します。</p>
+                        </div>
+                        <span class="text-[10px] text-right font-bold text-brand-geminiBlue group-hover:underline mt-4 block">🔍 クリックして詳細を表示</span>
+                    </div>
+                    <!-- Canvas -->
+                    <div onclick="showDetailModal('canvas')" class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm premium-card cursor-pointer group flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xl">🎨</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-0.5 rounded-full">ワークスペース</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-geminiBlue transition-all">Canvas (キャンバス)</h3>
+                            <p class="text-xs text-brand-geminiBlue font-bold">AIにアウトプットの"形"を作らせる</p>
+                            <p class="text-xs text-slate-500 leading-relaxed">チャットとは別に、横並びのエディター画面でAIと一緒にドキュメントやプログラムコードを作成します。特定の段落だけを書き換えたり、修正を直接指示できます。</p>
+                        </div>
+                        <span class="text-[10px] text-right font-bold text-brand-geminiBlue group-hover:underline mt-4 block">🔍 クリックして詳細を表示</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Google Workspace 連携 -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">3. Google Workspace 連携</h2>
+                    <p class="text-slate-500 text-sm mt-1">「@カレンダー」「@Gmail」を使うだけで、日々動いているツールと直結して指示ができます。</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Googleカレンダー -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">📅</div>
+                            <h3 class="font-bold text-slate-800 text-sm">Googleカレンダー連携</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">「今日の午後の予定を箇条書きで教えて」「明日、〇〇さんとのミーティングを入れる空き時間はある？」など、カレンダーの管理を自動化。</p>
+                        </div>
+                        <button onclick="showDemo('workspace-calendar')" class="w-full mt-4 py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-center space-x-1">
+                            <span>💻</span> <span>実例デモを見る</span>
+                        </button>
+                    </div>
+                    <!-- Gmail -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-lg">✉️</div>
+                            <h3 class="font-bold text-slate-800 text-sm">Gmail 連携</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">「〇〇さんから届いたメールから、来週の打ち合わせの日程調整に関するメッセージだけを検索して3ステップで要約して」など、メール整理を支援。</p>
+                        </div>
+                        <button onclick="showDemo('workspace-gmail')" class="w-full mt-4 py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-center space-x-1">
+                            <span>💻</span> <span>実例デモを見る</span>
+                        </button>
+                    </div>
+                    <!-- スプレッドシート -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-3">
+                            <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-lg">📊</div>
+                            <h3 class="font-bold text-slate-800 text-sm">Googleスプレッドシート連携</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">「スプレッドシートの売上データを元に、四半期の売上トレンド分析の表を作成して」「数式を教えて」など、Excel/スプレッドシートの関数設計から可視化。</p>
+                        </div>
+                        <button onclick="showDemo('workspace-sheets')" class="w-full mt-4 py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-xs font-bold text-slate-700 flex items-center justify-center space-x-1">
+                            <span>💻</span> <span>実例デモを見る</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ページ下部ナビゲーション -->
+            <div class="border-t border-slate-100 pt-10 flex justify-between items-center">
+                <button onclick="navigateTo('intro')" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-300 active:scale-95 transition-all flex items-center space-x-2">
+                    <span>←</span> <span>前のページ：🏠 AI紹介ポータル</span>
+                </button>
+                <button onclick="navigateTo('copilot')" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-teal-500 text-white rounded-xl font-bold text-sm hover:from-blue-700 hover:to-teal-600 shadow-md shadow-blue-100 active:scale-95 transition-all flex items-center space-x-2">
+                    <span>次のページ：💼 Copilot 活用ガイド</span><span>→</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==========================================③ Copilot活用ページ -->
+        <div id="page-copilot" class="page-transition page-enter hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
+            <!-- ヒーロー -->
+            <div class="text-center space-y-4 max-w-3xl mx-auto pt-4">
+                <span class="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide text-brand-copilotBlue bg-sky-50 border border-sky-100 uppercase">Microsoft 365 Copilot</span>
+                <h1 class="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 leading-tight">Microsoft 365を<br><span class="bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">もっと便利にする、あなたの副操縦士</span></h1>
+                <p class="text-lg text-slate-500 font-light leading-relaxed">Copilotは「仕事のインフラ」であるExcel、Word、PowerPoint、Teamsと完全融合したAIです。アプリから離れることなく、目の前の業務資料や作業プロセスを一瞬で高速化します。</p>
+                <div class="flex flex-wrap justify-center gap-2 pt-2">
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">📝 Word: 骨子から長文自動執筆</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">📊 Excel: 数式・関数・データ分析</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">🎨 PowerPoint: 下書きから一瞬でスライド化</span>
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">🔄 複数アプリの横断情報連携</span>
+                </div>
+            </div>
+
+            <!-- Microsoft 365 各アプリケーション対応ガイド -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">1. Microsoft 365 アプリ別最強活用シナリオ</h2>
+                    <p class="text-slate-500 text-sm mt-1">それぞれのアプリの入力窓から、これらを直接命令してみてください。</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Word -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">W</div>
+                                <span class="text-[10px] text-blue-600 bg-blue-50 border border-blue-100 font-bold px-2.5 py-0.5 rounded-full">Word</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900">企画書・規約の自動執筆</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">「要点だけを箇条書きしたテキスト」や「過去の提案書」から、構成が美しくフォーマットされたオフィシャルな長文レポートへ一発肉付け。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-6 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('copilot-word')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('copilot-word-p')" class="py-2 bg-sky-50 hover:bg-sky-100 rounded-lg text-[10px] font-bold text-brand-copilotBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Excel -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold">X</div>
+                                <span class="text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-100 font-bold px-2.5 py-0.5 rounded-full">Excel</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900">データ分析・マクロ関数の構築</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">難解な「VLOOKUP」や「IFERROR」などの関数を、AIに日本語でやり取りしながら設置。一瞬で売れ筋やデータの要約傾向をハイライト表示。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-6 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('copilot-excel')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('copilot-excel-p')" class="py-2 bg-sky-50 hover:bg-sky-100 rounded-lg text-[10px] font-bold text-brand-copilotBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- PowerPoint -->
+                    <div class="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between premium-card">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-lg font-bold">P</div>
+                                <span class="text-[10px] text-orange-600 bg-orange-50 border border-orange-100 font-bold px-2.5 py-0.5 rounded-full">PowerPoint</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900">下書きからスライド一瞬作成</h3>
+                            <p class="text-xs text-slate-500 leading-relaxed">作成したWordの企画書をインポートして「この企画書に基づいて、新規顧客向けの10スライドのプレゼンテーションに変換して」と入力するだけ。</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-6 pt-3 border-t border-slate-50">
+                            <button onclick="showDemo('copilot-powerpoint')" class="py-2 bg-slate-50 hover:bg-slate-100 rounded-lg text-[10px] font-bold text-slate-700 flex items-center justify-center space-x-1">
+                                <span>💻</span> <span>実例デモ</span>
+                            </button>
+                            <button onclick="showPrompt('copilot-powerpoint-p')" class="py-2 bg-sky-50 hover:bg-sky-100 rounded-lg text-[10px] font-bold text-brand-copilotBlue flex items-center justify-center space-x-1">
+                                <span>📋</span> <span>プロンプト</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- アプリ間連携フローチャート -->
+            <section class="space-y-8">
+                <div class="text-center max-w-xl mx-auto">
+                    <h2 class="text-2xl font-bold text-slate-800">2. アプリを跨ぐシームレスな自動連携フロー</h2>
+                    <p class="text-slate-500 text-sm mt-1">Copilotは個々のアプリだけで動きません。アプリ同士を繋ぎ合わせ、ドキュメントの相互変換を行います。以下のボタンを押してフローを体験しましょう。</p>
+                </div>
+                <!-- インタラクティブ・フローチャート -->
+                <div class="bg-white border border-slate-100 rounded-3xl p-6 sm:p-10 shadow-sm max-w-4xl mx-auto relative overflow-hidden">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                        <button onclick="highlightFlow('w-ppt')" class="flow-tab-btn p-3 rounded-xl border border-blue-100 text-xs font-bold text-blue-700 bg-blue-50/50 hover:bg-blue-50 transition-all text-center">Word ➔ PowerPoint</button>
+                        <button onclick="highlightFlow('x-ppt')" class="flow-tab-btn p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all text-center">Excel ➔ PowerPoint</button>
+                        <button onclick="highlightFlow('wx-ppt')" class="flow-tab-btn p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all text-center">Word ＋ Excel ➔ PPT</button>
+                        <button onclick="highlightFlow('ppt-w')" class="flow-tab-btn p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all text-center">PowerPoint ➔ Word</button>
+                    </div>
+                    <!-- フロービジュアル (SVG / CSS) -->
+                    <div class="relative bg-slate-950 rounded-2xl p-6 md:p-10 text-white min-h-[260px] flex flex-col justify-between overflow-hidden">
+                        <!-- 装飾グリッド -->
+                        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+                        <!-- 連携フロータイトル解説 -->
+                        <div class="relative z-10 text-center sm:text-left mb-6">
+                            <span class="text-[10px] text-indigo-400 font-extrabold uppercase tracking-widest">ACTIVE SYNERGY ACTION</span>
+                            <h4 id="flow-title" class="text-lg font-black mt-1">WordドキュメントからPowerPointへの自動変換</h4>
+                            <p id="flow-desc" class="text-xs text-slate-400 mt-1 max-w-2xl leading-relaxed">Wordに書かれた詳細な商品企画書を読み込み、構成とキーメッセージを読み取って、それに合致するPowerPointスライドの構成とテキストを自動レイアウトします。</p>
+                        </div>
+                        <!-- フローチャートSVG描画 -->
+                        <div class="relative z-10 flex flex-col sm:flex-row items-center justify-around space-y-4 sm:space-y-0 w-full mt-2">
+                            <!-- Source Node -->
+                            <div class="flex items-center space-x-3 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 min-w-[140px] shadow-lg">
+                                <div id="source-icon" class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">W</div>
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block font-bold">SOURCE</span>
+                                    <span id="source-name" class="text-xs font-bold">Word文書</span>
+                                </div>
+                            </div>
+                            <!-- Arrow Connector (SVG) -->
+                            <div class="hidden sm:block w-32 h-10 relative">
+                                <svg class="w-full h-full" viewBox="0 0 100 40" fill="none">
+                                    <path d="M10 20 H90" stroke="#374151" stroke-width="2" />
+                                    <path class="flow-line" d="M10 20 H90" stroke="#3b82f6" stroke-width="2" />
+                                    <polygon points="90,20 83,16 83,24" fill="#3b82f6" />
+                                </svg>
+                                <span class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-900 px-2 py-0.5 border border-slate-800 rounded text-[9px] font-mono text-slate-400">Copilot変換</span>
+                            </div>
+                            <!-- Target Node -->
+                            <div class="flex items-center space-x-3 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 min-w-[140px] shadow-lg">
+                                <div id="target-icon" class="w-8 h-8 rounded-lg bg-orange-600 text-white flex items-center justify-center font-bold text-sm font-bold">P</div>
+                                <div>
+                                    <span class="text-[9px] text-slate-500 block font-bold">TARGET</span>
+                                    <span id="target-name" class="text-xs font-bold">PowerPoint</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ページ下部ナビゲーション -->
+            <div class="border-t border-slate-100 pt-10 flex justify-between items-center">
+                <button onclick="navigateTo('gemini')" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl font-bold text-sm hover:bg-slate-300 active:scale-95 transition-all flex items-center space-x-2">
+                    <span>←</span> <span>前のページ：💎 Gemini 活用ガイド</span>
+                </button>
+                <button onclick="navigateTo('intro')" class="px-6 py-3 bg-gradient-to-r from-brand-indigo to-pink-500 text-white rounded-xl font-bold text-sm hover:from-indigo-600 hover:to-pink-600 shadow-md shadow-indigo-100 active:scale-95 transition-all flex items-center space-x-2">
+                    <span>🏠 AI紹介ポータル（トップ）へ戻る</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 共通フッター -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-xs mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm">AI</div>
+                <span class="font-bold text-slate-200 tracking-wider">社内AI活用ポータルサイト</span>
+            </div>
+            <p>© 2026 Internal IT Strategy Division. All Rights Reserved.</p>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-white transition-all">ヘルプ・問い合わせ</a>
+                <span>|</span>
+                <a href="#" class="hover:text-white transition-all">セキュリティポリシー</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==========================================モーダルシステム (プロンプトビュー、実例デモ、詳細説明) -->
+    <!-- ① プロンプトモーダル -->
+    <div id="prompt-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📋</span>
+                    <h3 id="prompt-modal-title" class="font-bold text-slate-800">プロンプトテンプレート</h3>
+                </div>
+                <button onclick="closeModal('prompt-modal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">×</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-slate-500">コピーボタンを押すとクリップボードにコピーされます。そのままAIの指示ウィンドウに貼り付けてご活用ください。</p>
+                <div class="bg-slate-950 rounded-xl p-5 relative">
+                    <button onclick="copyModalPrompt()" id="modal-prompt-copy-btn" class="absolute top-3 right-3 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg font-bold transition-all">コピー</button>
+                    <pre id="prompt-modal-content" class="text-slate-300 text-xs font-mono whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto pt-6"></pre>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-100/50 p-4 rounded-xl">
+                    <h4 class="font-bold text-xs text-indigo-900 mb-1">💡 活用のアドバイス</h4>
+                    <p id="prompt-modal-tip" class="text-[11px] text-indigo-700 leading-relaxed"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ② 実例デモモーダル (疑似チャットセッション) -->
+    <div id="demo-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-950 rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-800 overflow-hidden transform transition-all">
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between text-white bg-slate-900">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                    <h3 id="demo-modal-title" class="font-bold text-sm">体験デモ・シミュレーター</h3>
+                </div>
+                <button onclick="closeModal('demo-modal')" class="text-slate-400 hover:text-white font-bold text-lg">×</button>
+            </div>
+            <!-- チャットエディタ画面 -->
+            <div class="p-6 h-[400px] overflow-y-auto space-y-4 font-sans text-xs flex flex-col justify-end" id="demo-chat-box">
+                <!-- コンテンツはJSで動的に流し込みます -->
+            </div>
+            <!-- フッターコントロール -->
+            <div class="p-4 bg-slate-900 border-t border-slate-800 flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">※実際の出力イメージを表現しています。</span>
+                <button onclick="restartDemo()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-[10px] font-bold transition-all">🔄 デモを最初から再生する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ③ 応用3選・詳細モーダル -->
+    <div id="detail-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-100 overflow-hidden transform transition-all">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <h3 id="detail-modal-title" class="font-extrabold text-slate-800 text-lg">Gems 活用詳細</h3>
+                <button onclick="closeModal('detail-modal')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">×</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div id="detail-modal-illustration" class="w-full h-32 bg-slate-50 rounded-xl flex items-center justify-center text-4xl"></div>
+                <h4 id="detail-modal-subtitle" class="font-bold text-sm text-indigo-600">性格と知識をあらかじめ登録可能</h4>
+                <p id="detail-modal-desc" class="text-xs text-slate-500 leading-relaxed"></p>
+                <div class="bg-slate-50 p-4 rounded-xl space-y-2">
+                    <h5 class="text-xs font-bold text-slate-700">📌 社内での具体的な活用案</h5>
+                    <ul id="detail-modal-list" class="text-xs text-slate-500 space-y-1 list-disc pl-4">
+                        <!-- 動的挿入 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================JavaScript ロジック -->
+    <script>
+        // ------------------------------------------
+        // SPA ページ遷移管理
+        // ------------------------------------------
+        function navigateTo(pageId) {
+            // スクロールトップ
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // すべてのページを非表示にし、指定のページを表示
+            const pages = ['intro', 'gemini', 'copilot'];
+            pages.forEach(p => {
+                const targetPage = document.getElementById(`page-${p}`);
+                if (p === pageId) {
+                    targetPage.classList.remove('hidden', 'page-enter');
+                    targetPage.classList.add('page-enter-active');
+                } else {
+                    targetPage.classList.add('hidden', 'page-enter');
+                    targetPage.classList.remove('page-enter-active');
+                }
+            });
+
+            // ナビゲーションボタンのアクティブ状態の更新 (デスクトップ)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-indigo', 'text-white', 'shadow-md', 'shadow-indigo-100', 'bg-slate-100/80', 'text-slate-700');
+                if (btn.id === `nav-${pageId}`) {
+                    const activeColor = pageId === 'intro' ? 'bg-gradient-to-r from-brand-indigo to-purple-600' : (pageId === 'gemini' ? 'bg-brand-geminiBlue' : 'bg-brand-copilotBlue');
+                    btn.className = `nav-btn px-4 py-2 rounded-lg font-bold text-sm flex items-center space-x-1.5 transition-all ${activeColor} text-white shadow-md`;
+                } else {
+                    btn.className = `nav-btn px-4 py-2 rounded-lg font-medium text-sm flex items-center space-x-1.5 transition-all text-slate-600 hover:text-slate-900`;
+                }
+            });
+
+            // モバイル用アクティブ状態の更新
+            document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-600', 'bg-indigo-50', 'text-slate-500');
+                if (btn.id === `mob-nav-${pageId}`) {
+                    const activeText = pageId === 'intro' ? 'text-brand-indigo' : (pageId === 'gemini' ? 'text-brand-geminiBlue' : 'text-brand-copilotBlue');
+                    btn.className = `mob-nav-btn flex flex-col items-center space-y-0.5 py-1 px-3 rounded-xl transition-all ${activeText} bg-slate-50 font-bold`;
+                } else {
+                    btn.className = `mob-nav-btn flex flex-col items-center space-y-0.5 py-1 px-3 rounded-xl transition-all text-slate-500`;
+                }
+            });
+        }
+
+        // 初期ロード時にイントロページをセット
+        window.onload = function() {
+            navigateTo('intro');
+        }
+
+        // ------------------------------------------
+        // 折りたたみアコーディオン (ハルシネーション5つのコツ)
+        // ------------------------------------------
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const arrow = document.getElementById(`arrow-${id}`);
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // ------------------------------------------
+        // コピペ機能
+        // ------------------------------------------
+        function copyText(inputId) {
+            const textToCopy = document.getElementById(inputId).value;
+            const btn = document.getElementById(`${inputId}-btn`);
+            
+            // 旧来の方法でコピー (iFrame対応)
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            // 一時的にボタンの表示を変更
+            const originalText = btn.innerText;
+            btn.innerText = 'コピー完了！';
+            btn.classList.add('text-emerald-400');
+            
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove('text-emerald-400');
+            }, 2000);
+        }
+
+        // ------------------------------------------
+        // インタラクティブツール: プロンプトメーカー
+        // ------------------------------------------
+        function generatePrompt() {
+            const role = document.getElementById('pm-role').value || "優秀なビジネスアシスタント";
+            const task = document.getElementById('pm-task').value || "指示を待っています";
+            const context = document.getElementById('pm-context-input').value; 
+            const optEvidence = document.getElementById('pm-opt-evidence').checked;
+            const optUnknown = document.getElementById('pm-opt-unknown').checked;
+            const optProcess = document.getElementById('pm-opt-process').checked;
+            const optCritic = document.getElementById('pm-opt-critic').checked;
+
+            let prompt = `#役割:\nあなたは【${role}】です。プロとして高い精度と論理性を備えた回答を心掛けてください。\n\n#タスク:\n${task}`;
+            
+            if (context) {
+                prompt += `\n\n#参考情報（文脈）:\n${context}`;
+            }
+            
+            prompt += `\n\n#制約事項:\n`;
+            
+            if (optEvidence) {
+                prompt += `- あなたが提示する主張や事実については、必ずその根拠、またはそう考える論理的なソースを箇条書きで添えてください。\n`;
+            }
+            if (optUnknown) {
+                prompt += `- 自身の記憶や学習データから推測できない、または情報に確証が持てない場合は、もっともらしい嘘を作らず、素直に「分かりません」「データが不足しています」と回答してください。\n`;
+            }
+            if (optProcess) {
+                prompt += `- 最終的な結論を出す前に、どのようなステップでその結論に至ったか、思考の道筋を箇条書きで示してください。\n`;
+            }
+            if (optCritic) {
+                prompt += `- 回答の最後、または推敲のプロセスにおいて、あえて「批判的な検証役」としての視点を取り入れ、自分の出した結論に対する想定されるリスクや論理的矛盾点、事実誤認（ハルシネーション）がないかを厳しくチェック・指摘してください。\n`;
+            }
+            prompt += `- 専門用語を乱用せず、読みやすいフォーマット（見出しや箇条書き等）に構造化して出力してください。\n`;
+
+            const outputTextarea = document.getElementById('generated-prompt-output');
+            outputTextarea.value = prompt;
+            
+            // 生成完了アニメーション(Shimmer)
+            outputTextarea.classList.add('shimmer');
+            setTimeout(() => {
+                outputTextarea.classList.remove('shimmer');
+            }, 8000);
+        }
+
+        function copyGeneratedPrompt() {
+            const outputTextarea = document.getElementById('generated-prompt-output');
+            if (!outputTextarea.value) return;
+
+            const btn = document.getElementById('copy-prompt-btn');
+            const tempInput = document.createElement('textarea');
+            tempInput.value = outputTextarea.value;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span>✓</span> <span>コピー完了</span>';
+            btn.classList.remove('bg-slate-800', 'border-slate-700');
+            btn.classList.add('bg-emerald-600', 'border-emerald-500');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-emerald-600', 'border-emerald-500');
+                btn.classList.add('bg-slate-800', 'border-slate-700');
+            }, 2000);
+        }
+
+        // ------------------------------------------
+        // プロンプトデータバンク & モーダル展開
+        // ------------------------------------------
+        const PROMPT_DATABASE = {
+            'gemini-write-p': {
+                title: "💎 文章作成・添削プロンプト",
+                prompt: `#役割:\nあなたは社内外向け広報のエキスパートかつ優秀なコピーライターです。\n\n#前提条件:\n以下の[基本設定情報]を元に、新しい社内向け制度「リフレッシュサバティカル制度」に関する全社告知メールの文章を作成してください。\n\n#基本設定情報:\n- 制度名: リフレッシュサバティカル制度\n- 対象: 勤続3年以上の正社員\n- 内容: 最長1ヶ月の長期休暇（うち2週間は有給扱い）\n- 目的: 心身のリフレッシュ、キャリアの自己投資、他業界のインプット等\n\n#トーン&マナー:\n- 明るく、社員がモチベーションを高められるように\n- 申請方法や詳細について分かりやすく記載できるよう、あらかじめダミーの箇条書き部分を作っておいてください。`,
+                tip: "役割（Role）にコピーライターを与えることで、単に要件を羅列するだけでなく、社員に「制度を使ってみたい！」と思わせる感情を揺さぶる美しいイントロを作ることができます。"
+            },
+            'gemini-summary-p': {
+                title: "💎 膨大なマニュアルや海外論文の超要約",
+                prompt: `#役割:\nあなたは論理的な要約と整理能力に優れた、外資系ファーム出身の経営コンサルタントです。\n\n#タスク:\n次にインプットする[文章]の要点を整理し、読んだ人が30秒で理解できるエグゼクティブ・サマリー（要約）を出力してください。\n\n#出力形式:\n- 【一文要約】: 全体のメインテーマを1文でズバッと要約\n- 【重要ポイント3点】: 最も重要な発見、あるいは合意形成点を3箇条で（各50文字以内）\n- 【取るべき次のアクション】: 推測されるNext Action案を2点提示`,
+                tip: "インプットが長い場合、まず「全体を一言で表すと何か」をAIに定義させることで、情報の歪みを防ぐことができます。"
+            },
+            'gemini-meeting-p': {
+                title: "💎 雑多な文字起こしからの「完璧な議事録」",
+                prompt: `#役割:\nあなたは非常に要点整理の得意な、プロジェクトマネージャーです。\n\n#前提状況:\n以下に提示する会議の文字起こしは、Teamsの自動文字起こし機能により作成されており、誤字脱字、話し言葉、順番の乱れなどが発生しています。これらを美しく構造化された議事録へ変換してください。\n\n#議事録の構成構成:\n1. 会議名 / 開催概要 (文字起こしから推測)\n2. 決定された決定事項 (箇条書きで極力短く)\n3. 今後実行されるべきToDoタスク (誰が・いつまでに・何を)\n4. 今回のミーティングで解決しなかった「今後の協議事項」`,
+                tip: "文字起こしテキストには「あの」「その」といった不要な言葉が多く含まれます。AIに「それらはカットし、論旨だけを紡ぎ合わせて」と事前定義すると綺麗な結果になります。"
+            },
+            'gemini-brainstorm-p': {
+                title: "💎 アイデアの掛け合わせ・壁打ち",
+                prompt: `#役割:\nあなたはクリエイティブな発想力を評価されている、プロダクトプランナーです。\n\n#相談内容:\n当社のIT事業部において、夏季休業中に「若手社員向けの1日ハッカソン」を開催したいと考えています。しかし、単に開発をするだけでは堅苦しく感じてしまいます。\n\n#制約:\n- 参加者が自然に笑顔になり、チームワークが爆発するような「一風変わった演出やユニークな企画案」を5つ提示してください。\n- それぞれの案に対して、メリットと懸念点、解決アプローチの3点セットで記載してください。`,
+                tip: "「アイデアを出して」だけだと平凡な案が出やすくなります。「一風変わった」「ユニークな」などの形容詞をプロンプトに入れることで、創造性のリミッターが外れます。"
+            },
+            'copilot-word-p': {
+                title: "💼 Word: 企画書ドラフト作成",
+                prompt: `「[参考企画アイデア.txt] を読み込んで、正式な事業計画書のドラフトをWord形式で生成してください。セクション構成は【エグゼクティブサマリー、市場の課題、提案するソリューション、ロードマップ、期待される効果】とし、会社役員へ提出するオフィシャルなトーンで統一してください。」`,
+                tip: "Word用のCopilotでは、元になるメモファイルを添付して『Word形式でドキュメントを立ち上げて』とチャット指示するのが最適です。"
+            },
+            'copilot-excel-p': {
+                title: "💼 Excel: トレンドデータハイライト",
+                prompt: `「この売上テーブル（Table1）を元に、月ごとの売上合計を算出するピボットグラフを作る数式を作成しなさい。また、前月比で成長率が15%を超えている成長セルを自動的に緑色の背景色にハイライトする条件付き書式の設定プロセスを提案して。」`,
+                tip: "ExcelのCopilotに数式を作らせる際は、対象データの表（テーブル名や列名）を明示すると、コピペしてそのまま動く数式を出してくれます。"
+            },
+            'copilot-powerpoint-p': {
+                title: "💼 PowerPoint: 企画書から一発スライド",
+                prompt: `「添付した[新商品企画報告書.docx]の情報をすべて分析し、それに基づいてクライアントに見せる10スライドからなるPowerPointプレゼンテーションを新規に作成して。各スライドには、テキストの要約だけではなく、スピーカーノートのスクリプト原稿も下部に追加してください。」`,
+                tip: "WordをPowerPointに変換させるのが最強の時短です。構成比の変更、スライドの削除など、生成後もチャットでいくらでも微調整が効きます。"
+            }
+        };
+
+        let currentActivePrompt = "";
+
+        function showPrompt(id) {
+            const data = PROMPT_DATABASE[id];
+            if (!data) return;
+            
+            document.getElementById('prompt-modal-title').innerText = data.title;
+            document.getElementById('prompt-modal-content').innerText = data.prompt;
+            document.getElementById('prompt-modal-tip').innerText = data.tip;
+            currentActivePrompt = data.prompt;
+            
+            document.getElementById('prompt-modal').classList.remove('hidden');
+        }
+
+        function copyModalPrompt() {
+            if (!currentActivePrompt) return;
+            
+            const btn = document.getElementById('modal-prompt-copy-btn');
+            const tempInput = document.createElement('textarea');
+            tempInput.value = currentActivePrompt;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            const originalText = btn.innerText;
+            btn.innerText = 'コピー成功！';
+            btn.classList.remove('bg-slate-800');
+            btn.classList.add('bg-emerald-600');
+            
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.add('bg-slate-800');
+                btn.classList.remove('bg-emerald-600');
+            }, 2000);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // ------------------------------------------
+        // 体験デモ・シミュレーター (タイピングチャット)
+        // ------------------------------------------
+        const DEMO_DATABASE = {
+            'gemini-write': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>来週から始まる『ペーパーレス化推進月間』に向けて、社内の全メンバーに印刷削減を促す全社宛のメールを書いてください。堅苦しくなく、前向きに取り組めるようにして欲しいです。" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>承知いたしました！全社メンバーが『お、ちょっとやってみようかな』とワクワク取り組めるトーンでメールを作成しました。" },
+                { sender: 'system', text: "【件名】🌱 1枚のプリント削減から！『ペーパーレス推進月間』スタートのお知らせ<br><br>皆さん、お疲れ様です！IT総務部です。<br>突然ですが、私たちが毎日何気なく押している印刷ボタン、実はちょっとした工夫で『地球にも私たちの時間にも』とっても優しい革命が起こせるんです！<br><br><b>💡 私たちができる、今日からの3アクション</b><br>・<b>印刷前の1秒チェック:</b> 『これ、本当に紙で見る必要があるかな？』と問いかけてみる。<br>・<b>PDFを上手に活用:</b> デスクトップで資料を並べて確認。意外と紙より見やすいかも！<br>・<b>両面・白黒はデフォルトに:</b> 紙の枚数も、印刷コストもこれだけで半分に！<br><br>ゲーム感覚で、チームごとに今週のプリント削減数などを競い合ってみませんか？ご協力よろしくお願いいたします！" }
+            ],
+            'gemini-summary': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>当社に新しく導入された『セキュリティ対応規定.pdf』(全20ページ)から、一般社員が直ちに行動に移さなければならない要点だけを50文字程度の箇条書きで3点、要約してください。" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>かしこまりました。20ページの規約より、一般メンバーが必ず実践すべき『重要セキュリティルール』を3つに圧縮しました。" },
+                { sender: 'system', text: "<b>1. PCロックの徹底:</b> 離席する際は、わずか10秒であっても必ず [Win + L]キーで画面をロックすること。<br><b>2. 不審なメールの通報:</b> 外部からのメールで、添付ファイルやリンクが少しでも怪しいと感じたら開かずに情報システム部へ転送すること。<br><b>3. 私物USBの接続禁止:</b> 会社指定外の個人用メディア、スマートフォンを社内貸与PCに接続しないこと。" }
+            ],
+            'gemini-meeting': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>ミーティングの文字起こしを送ります。『佐藤：来週の進捗会は水曜にしよう。鈴木：あ、それなら資料は火曜までに作りますね。佐藤：鈴木さん、デザインは高橋さんに事前に見せてね。』。これを議事録に直して。" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>会議での佐藤様、鈴木様のやり取りから、要件とタスクの議事録を構造化いたしました。" },
+                { sender: 'system', text: "<b>📅 次回ミーティング日時:</b><br>・日時: 来週の水曜日<br><br><b>📋 決定・アクション事項:</b><br>・<b>[鈴木]</b> 進捗報告用資料の作成 (期限: 火曜日まで)<br>・<b>[鈴木]</b> 作成中のデザイン案を事前に高橋様へ共有し、レビューを得ること" }
+            ],
+            'gemini-brainstorm': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>新入社員の緊張ほぐすために、オンライン歓迎会で盛り上がる『5分間のゲームアイデア』を3つほどブレストして！" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>オンライン上で、短時間で爆発的に距離が縮まるアイスブレイクゲームを3案作成しました！" },
+                { sender: 'system', text: "<b>1. 『私の部屋の珍百景』:</b> 自宅にある『ちょっと珍しいもの』をWebカメラに見せて紹介。意外な趣味が見えて会話が弾みます。<br><b>2. 『実は私、〇〇なんです』クイズ:</b> 事前にもらった新入社員のちょっとした秘密（例：元甲子園球児、実は辛いものが全くダメ）を先輩が当てるクイズ。<br><b>3. 『ジェスチャーしりとり』:</b> マイクを完全にミュートにして、画面の動きだけでしりとりを繋ぐ。爆笑必至のアクションゲームです。" }
+            ],
+            'copilot-word': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>[サマリーメモ.txt] を読み込んで、Word上でしっかりしたビジネス企画書の体裁に整えてください。" },
+                { sender: 'system', text: "🤖 <b>Copilot:</b><br>サマリーメモから見出し、イントロダクション、メリットを割り出し、Wordドキュメントを作成しました。" },
+                { sender: 'system', text: "<b>【生成されたWordの表示イメージ】</b><br><h1 class='text-lg font-bold border-b border-blue-500 pb-1'>1. 新規DXツール導入による業務スピードアップの提案</h1><br><b>■ 背景と目的</b><br>現在、当社の一部業務で発生しているアナログ承認プロセスは平均2日間を要しており、このリードタイムの圧縮が競争力向上のために急務です。<br><br><b>■ 期待される定量的な導入効果</b><br>・承認リードタイム: 平均48時間 ➔ <b>最短15分へ推移</b><br>・紙の利用削減枚数: <b>月間およそ12,000枚</b>" }
+            ],
+            'copilot-excel': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>A列の売上合計、B列のコストから、粗利率（％）を算出してC列に自動反映する関数を書いて。ついでに50%以上の優秀な行を色付けたい。" },
+                { sender: 'system', text: "🤖 <b>Copilot:</b><br>Excelの該当するテーブルセルへ設置すべき関数と、条件付き書式のアプローチを提供します。" },
+                { sender: 'system', text: "<b>C2セルに入れる関数:</b><br><code class='bg-slate-800 text-green-400 p-1 rounded'>=IFERROR((A2-B2)/A2, 0)</code><br><br><b>条件付き書式設定プロセス:</b><br>1. C列全体を選択します。<br>2. 『条件付き書式 ➔ セルの強調表示ルール ➔ 指定の値より大きい』を選択。<br>3. 入力欄に『0.5』をセットし、値は『濃い緑色の文字、明るい緑色の背景』を選択して適用します。" }
+            ],
+            'copilot-powerpoint': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>さっきWordで作った事業計画書を読み込んで、スライド10枚のPowerPointを作成してください。ビジュアルなレイアウトでお願いします。" },
+                { sender: 'system', text: "🤖 <b>Copilot:</b><br>事業計画書の1.背景、2.課題、3.対策、4.リソース、5.スケジュールを読み込み、それに適したテンプレートで10スライドからなるPowerPointファイルを生成完了しました。" },
+                { sender: 'system', text: "<b>スライド3: 『現状における最大のボトルネック（課題）』</b><br>・承認プロセスに多大な時間がかかり、迅速な意思決定を阻害。<br>・紙による申請による紛失・セキュリティリスク。<br><br><b>[スピーカーノート追加分]:</b><br>『皆さん、このスライドでは私たちが長年抱えるアナログ管理の限界を明示しています。年間で何時間のロスが出ているかを次に説明します...』" }
+            ],
+            'workspace-calendar': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>@Googleカレンダー 今日のお昼の14:00〜16:00の間、会議室を予約したいです。空いている会議室を調べて自動で予約を入れてください。" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>カレンダーデータおよび社内設備予約システムをチェックしました。" },
+                { sender: 'system', text: "本日14:00〜16:00の枠で、<b>『会議室A (定員8名)』</b>および<b>『ミーティングスペースC (定員4名)』</b>が予約可能です。ご希望の『会議室A』でカレンダー上に「DX推進企画検討会」の予定をセットし、会議室予約を完了しました。" }
+            ],
+            'workspace-gmail': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>@Gmail 今週、高橋さんから届いたメールから、製品サンプルの修正依頼に関わる記述を抜き出して箇条書きで教えて。" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>高橋様より届いた3通のメールを分析しました。修正依頼のあった箇所を2点要約します。" },
+                { sender: 'system', text: "<b>1. カラーリングの変更:</b> 試作品の本体カバー色を『インディゴ』から、より社内規定色に近い『ダークネイビー』へ変更すること。<br><b>2. ロゴの配置調整:</b> フロントパネル上部のロゴマークサイズを、15%ほど縮小し中央に再配置すること。" }
+            ],
+            'workspace-sheets': [
+                { sender: 'user', text: "👤 <b>ユーザー:</b><br>@Googleスプレッドシート 『2026年Q1売上実績』シートのデータに基づいて、各地域の売上合計を算出して、円グラフにするための集計表を組んでください。" },
+                { sender: 'system', text: "🤖 <b>Gemini:</b><br>売上実績シートのデータをスキャンし、ピボットデータを構築しました。" },
+                { sender: 'system', text: "集計表は以下の通りスプレッドシート（セルF1〜G5）へ出力しました。<br><br>・関東地区: 12,450,000円 (45%)<br>・関西地区: 8,900,000円 (32%)<br>・中部地区: 3,200,000円 (12%)<br>・その他地区: 3,110,000円 (11%)<br><br>上記結果をもとに、シート上に『地域別売上比率（円グラフ）』を新規配置完了しました。" }
+            ]
+        };
+
+        let activeDemoTimeline = [];
+        let demoInterval = null;
+
+        function showDemo(demoId) {
+            const data = DEMO_DATABASE[demoId];
+            if (!data) return;
+            
+            activeDemoTimeline = data;
+            document.getElementById('demo-modal').classList.remove('hidden');
+            
+            // 再生開始
+            restartDemo();
+        }
+
+        function restartDemo() {
+            clearInterval(demoInterval);
+            const chatBox = document.getElementById('demo-chat-box');
+            chatBox.innerHTML = ''; // クリア
+            
+            let index = 0;
+            
+            function showNext() {
+                if (index < activeDemoTimeline.length) {
+                    const message = activeDemoTimeline[index];
+                    const msgDiv = document.createElement('div');
+                    
+                    if (message.sender === 'user') {
+                        msgDiv.className = "bg-slate-900 border border-slate-800 text-slate-200 p-3 rounded-2xl max-w-[85%] self-start transform transition-all duration-300 scale-95 opacity-0";
+                    } else {
+                        msgDiv.className = "bg-blue-950 border border-blue-900 text-blue-100 p-3 rounded-2xl max-w-[85%] self-end transform transition-all duration-300 scale-95 opacity-0";
+                    }
+                    
+                    msgDiv.innerHTML = message.text;
+                    chatBox.appendChild(msgDiv);
+                    
+                    // スクロール底上げ
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    
+                    // ふわっと表示させる
+                    setTimeout(() => {
+                        msgDiv.classList.remove('scale-95', 'opacity-0');
+                        msgDiv.classList.add('scale-100', 'opacity-100');
+                    }, 50);
+                    
+                    index++;
+                    // 次のメッセージまで遅延をあげる（AI回答はちょっと長めに）
+                    const delay = message.sender === 'user' ? 1200 : 2500;
+                    demoInterval = setTimeout(showNext, delay);
+                }
+            }
+            
+            showNext();
+        }
+
+        // ------------------------------------------
+        // 詳細説明モーダル (Gems, NotebookLM, Canvas)
+        // ------------------------------------------
+        const DETAIL_DATABASE = {
+            'gems': {
+                title: " GEMS（ジェムズ）の詳細と社内活用方法 ",
+                illustration: "🛠️🤖",
+                subtitle: "よく使うプロンプト・役割の完全定型化",
+                desc: "Gemsは、あらかじめ『あなたは当社のセキュリティ監査員です』『あなたはIT機器ヘルプデスク窓口です』のように性格・ルール・出力ルールを設定した、あなた専用の分身AIチャット。毎回同じ前提知識をコピペする必要がなくなります。",
+                list: [
+                    '<b>社内報編集Gems:</b> 下案を入れるだけで、社内規定に沿った柔らかいトーンに自動変換・推敲してくれるGems。',
+                    '<b>FAQ・メール作成Gems:</b> よくある問い合わせを入力すると、丁寧な定型返信メールを自動合成するGems。',
+                    '<b>コードクリーナーGems:</b> 自作したプログラムを渡すと、バグの検出、安全性の強化、コメントアウトを自動で行うGems。'
+                ]
+            },
+            'notebooklm': {
+                title: " NotebookLM の詳細と社内活用方法 ",
+                illustration: "📚✨",
+                subtitle: "社内マニュアルやプロジェクト資料を丸ごとAI化",
+                desc: "アップロードした最大数十万字の文書・Webサイトの群をAIが完璧に記憶。一般的なネット知識を混同せず、あなたが渡したドキュメント『だけ』に基づいて、ソースを明記しながら高精度に回答します。社内ナレッジ共有の究極形です。",
+                list: [
+                    '<b>新任担当者向け引き継ぎAI:</b> 過去2年分の仕様書、打ち合わせ議事録を全て放り込み、新人がいつでも質問できる検索マシーンに。',
+                    '<b>業界調査ナレッジベース:</b> 最新の競合他社の公開資料、市場レポートPDFを一箇所にまとめ、自社との比較分析を瞬時に実行。',
+                    '<b>音声・動画付き議事録検索:</b> 録音テキストをアップロードし、「あのプロジェクトの、開発遅延の話題について佐藤さんが話していた箇所をすべてまとめて」と質問。'
+                ]
+            },
+            'canvas': {
+                title: " Canvas（キャンバス）の詳細と社内活用方法 ",
+                illustration: "🎨💻",
+                subtitle: "チャットを飛び出して、その場で共同執筆",
+                desc: "従来のAIはチャット形式で一連の回答しかできませんでしたが、Canvasは画面が左右に分かれ、右側のエディタ内のドキュメントやコードを直接人間が編集し、AIが特定行だけ書き換える、というワークフローが実現。共同編集がよりシームレスになります。",
+                list: [
+                    '<b>長文企画書の一括ブラッシュアップ:</b> 長文コラムを作成中、『この第3章だけ、もう少し数値を強調してドラマチックに書いて』と指示し該当箇所のみ自動リライト。',
+                    '<b>プログラムコードのインライン修正:</b> Webサイトのコードを表示させ、エラーが発生する1行のみを指定してその場でAIに修正を適用させる。',
+                    '<b>文字数削減・レイアウト調整:</b> 完成した文章全体の文字数をカウントさせながら、指定文字数に綺麗に収まるよう自動調整させる。'
+                ]
+            }
+        };
+
+        function showDetailModal(id) {
+            const data = DETAIL_DATABASE[id];
+            if (!data) return;
+            
+            document.getElementById('detail-modal-title').innerText = data.title;
+            document.getElementById('detail-modal-illustration').innerHTML = data.illustration;
+            document.getElementById('detail-modal-subtitle').innerText = data.subtitle;
+            document.getElementById('detail-modal-desc').innerText = data.desc;
+            
+            const listContainer = document.getElementById('detail-modal-list');
+            listContainer.innerHTML = '';
+            
+            data.list.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = item;
+                listContainer.appendChild(li);
+            });
+            
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        // ------------------------------------------
+        // Copilot アプリ間連携フローのアニメーション制御
+        // ------------------------------------------
+        const FLOW_DATABASE = {
+            'w-ppt': {
+                title: "WordドキュメントからPowerPointへの自動変換",
+                desc: "Wordに書かれた商品企画書を読み込み、構成とキーメッセージを読み取って、それに合致するPowerPointスライドの構成とテキストを自動レイアウトします。",
+                sourceIcon: "W",
+                sourceBg: "bg-blue-600",
+                sourceName: "Word文書",
+                targetIcon: "P",
+                targetBg: "bg-orange-600",
+                targetName: "PowerPoint"
+            },
+            'x-ppt': {
+                title: "Excelの売上テーブルをPowerPointグラフへ一発移行",
+                desc: "Excelで集計された売上データを認識し、売上トレンドを自動で美しいグラフ（棒・折れ線・円）に構築した上で、PowerPointのスライドへ配置・解説テキストを添えます。",
+                sourceIcon: "X",
+                sourceBg: "bg-emerald-600",
+                sourceName: "Excel売上表",
+                targetIcon: "P",
+                targetBg: "bg-orange-600",
+                targetName: "PowerPoint"
+            },
+            'wx-ppt': {
+                title: "Word＋Excelを掛け合わせた統合スライド自動生成",
+                desc: "Excelの数値根拠テーブルと、Wordで書かれたストーリーラインのドキュメントの2つのファイルを同時に読み込み、数値的に正しいビジュアルスライドへ完全翻訳します。",
+                sourceIcon: "W+X",
+                sourceBg: "bg-gradient-to-r from-blue-600 to-emerald-600",
+                sourceName: "Word＋Excel",
+                targetIcon: "P",
+                targetBg: "bg-orange-600",
+                targetName: "PowerPoint"
+            },
+            'ppt-w': {
+                title: "PowerPointプレゼンをWordのドキュメントマニュアルへリバース",
+                desc: "すでにあるPowerPointのスライド画像や構成、発表者用ノートのテキスト情報を全て抽出し、読みやすいWord形式のオフィシャルな配布用マニュアルドキュメントへ逆変換します。",
+                sourceIcon: "P",
+                sourceBg: "bg-orange-600",
+                sourceName: "PowerPoint",
+                targetIcon: "W",
+                targetBg: "bg-blue-600",
+                targetName: "Word文書"
+            }
+        };
+
+        function highlightFlow(flowId) {
+            const data = FLOW_DATABASE[flowId];
+            if (!data) return;
+            
+            // タブのアクティブクラス更新
+            document.querySelectorAll('.flow-tab-btn').forEach(btn => {
+                btn.className = "flow-tab-btn p-3 rounded-xl border border-slate-100 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-all text-center";
+            });
+            
+            // クリックされたボタンのアクティブ表示
+            const clickedBtn = event.currentTarget;
+            clickedBtn.className = "flow-tab-btn p-3 rounded-xl border border-blue-500 text-xs font-bold text-blue-700 bg-blue-50/50 transition-all text-center";
+            
+            // ビジュアル内容の更新
+            document.getElementById('flow-title').innerText = data.title;
+            document.getElementById('flow-desc').innerText = data.desc;
+            
+            // Source
+            const sIcon = document.getElementById('source-icon');
+            sIcon.className = `w-8 h-8 rounded-lg text-white flex items-center justify-center font-bold text-sm ${data.sourceBg}`;
+            sIcon.innerText = data.sourceIcon.includes('+') ? 'W+X' : data.sourceIcon;
+            document.getElementById('source-name').innerText = data.sourceName;
+            
+            // Target
+            const tIcon = document.getElementById('target-icon');
+            tIcon.className = `w-8 h-8 rounded-lg text-white flex items-center justify-center font-bold text-sm ${data.targetBg}`;
+            tIcon.innerText = data.targetIcon;
+            document.getElementById('target-name').innerText = data.targetName;
+        }
+    </script>
+</body>
+</html>
